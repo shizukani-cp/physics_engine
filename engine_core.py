@@ -88,3 +88,6 @@ class Engine:
     def after_update(self, world):
         pass
 
+    def stop(self):
+        print("シミュレーションを終了します。")
+

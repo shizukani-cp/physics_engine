@@ -7,14 +7,18 @@ def main():
     world = engine.start()
 
     while True:
-        world._update(interval)
-        world._render()
+        try:
+            world._update(interval)
+            world._render()
 
-        if world._all_objects_out_of_bounds():
-            print("すべてのオブジェクトが画面外に出ました。シミュレーションを終了します。")
+            if world._all_objects_out_of_bounds():
+                engine.stop()
+                break
+
+            time.sleep(interval)
+        except KeyboardInterrupt:
+            engine.stop()
             break
-
-        time.sleep(interval)
 
 if __name__ == "__main__":
     main()
