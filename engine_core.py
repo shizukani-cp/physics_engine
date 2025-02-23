@@ -8,6 +8,9 @@ class Vector2D:
     def __add__(self, other):
         return Vector2D(self.x + other.x, self.y + other.y)
 
+    def __sub__(self, other):
+        return Vector2D(self.x - other.x, self.y - other.y)
+
     def __mul__(self, scalar):
         return Vector2D(self.x * scalar, self.y * scalar)
 
@@ -50,7 +53,26 @@ class World:
         for obj in self.objects:
             obj.update(self, dt)
         self.frame_num += 1
+        self.check_collisions()
         self.config.after_update(self)
+
+    def check_collisions(self):
+        for i in range(len(self.objects)):
+            for j in range(i + 1, len(self.objects)):
+                obj1 = self.objects[i]
+                obj2 = self.objects[j]
+                if (int(obj1.position.x) == int(obj2.position.x) and
+                    int(obj1.position.y) == int(obj2.position.y)):
+                    if type(obj1) is type(obj2) and type(obj1) in (GravitibleObject, Object):
+                        self.resolve_collision(obj1, obj2)
+                    else:
+                        if isinstance(obj1, UnGravitibleObject):
+                            obj1, obj2 = obj2, obj1
+                        obj1.position.y = obj2.position.y + 1
+                        obj1.velocity.y *= -self.config.repulsion
+
+    def resolve_collision(self, obj1, obj2):
+        obj1.velocity, obj2.velocity = obj2.velocity, obj1.velocity
 
     def _render(self):
         self._clear_console()
