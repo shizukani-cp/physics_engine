@@ -23,8 +23,6 @@ class Vector2D:
 class UnGravitibleObject:
     def __init__(self, position, char="O"):
         self.position = position
-        if len(char) != 1:
-            raise ValueError("`char` is not 1 charactor!")
         self.char = char
 
     def update(self, world, dt):
