@@ -11,18 +11,25 @@ class Vector2D:
     def __mul__(self, scalar):
         return Vector2D(self.x * scalar, self.y * scalar)
 
-class Object:
-    def __init__(self, position, velocity, mass):
+class UnGravitibleObject:
+    def __init__(self, position, velocity):
         self.position = position
         self.velocity = velocity
-        self.mass = mass
 
     def update(self, world, dt):
-        self.velocity += Vector2D(0, -world.config.gravity) * dt
         self.position += self.velocity * dt
         if self.position.y < 0:
             self.position.y = 0
             self.velocity.y *= -world.config.repulsion
+
+class GravitibleObject(UnGravitibleObject):
+    def update(self, world, dt):
+        self.velocity += Vector2D(0, -world.config.gravity) * dt
+        print(self.velocity.x, self.velocity.y)
+        super().update(world, dt)
+
+class Object(GravitibleObject):
+    pass
 
 class World:
     def __init__(self, width, height, config):
