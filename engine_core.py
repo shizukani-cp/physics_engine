@@ -21,14 +21,17 @@ class Vector2D:
         return Vector2D(self.x / scalar, self.y / scalar)
 
 class UnGravitibleObject:
-    def __init__(self, position):
+    def __init__(self, position, char="O"):
         self.position = position
+        if len(char) != 1:
+            raise ValueError("`char` is not 1 charactor!")
+        self.char = char
 
     def update(self, world, dt):
         pass
 
 class GravitibleObject(UnGravitibleObject):
-    def __init__(self, position, velocity, mass):
+    def __init__(self, position, velocity, mass, char="O"):
         super().__init__(position)
         self.velocity = velocity
         self.mass = mass
@@ -92,7 +95,7 @@ class World:
             x = int(obj.position.x)
             y = int(self.height - obj.position.y - 1)
             if 0 <= x < self.width and 0 <= y < self.height:
-                grid[y][x] = 'O'
+                grid[y][x] = obj.char
 
         for row in grid:
             print(''.join(row))
