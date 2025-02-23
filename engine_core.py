@@ -14,6 +14,12 @@ class Vector2D:
     def __mul__(self, scalar):
         return Vector2D(self.x * scalar, self.y * scalar)
 
+    def __rmul__(self, scalar):
+        return self * scalar
+
+    def __truediv__(self, scalar):
+        return Vector2D(self.x / scalar, self.y / scalar)
+
 class UnGravitibleObject:
     def __init__(self, position):
         self.position = position
@@ -22,9 +28,10 @@ class UnGravitibleObject:
         pass
 
 class GravitibleObject(UnGravitibleObject):
-    def __init__(self, position, velocity):
+    def __init__(self, position, velocity, mass):
         super().__init__(position)
         self.velocity = velocity
+        self.mass = mass
 
     def update(self, world, dt):
         self.velocity += Vector2D(0, -world.config.gravity) * dt
@@ -72,7 +79,11 @@ class World:
                         obj1.velocity.y *= -self.config.repulsion
 
     def resolve_collision(self, obj1, obj2):
-        obj1.velocity, obj2.velocity = obj2.velocity, obj1.velocity
+        total_mass = obj1.mass + obj2.mass
+        v1 = ((obj1.mass - obj2.mass) * obj1.velocity + 2 * obj2.mass * obj2.velocity) / total_mass
+        v2 = ((obj2.mass - obj1.mass) * obj2.velocity + 2 * obj1.mass * obj1.velocity) / total_mass
+        obj1.velocity = v1
+        obj2.velocity = v2
 
     def _render(self):
         self._clear_console()
