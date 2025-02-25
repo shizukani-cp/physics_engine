@@ -29,13 +29,29 @@ class UnGravitibleObject:
         pass
 
 class GravitibleObject(UnGravitibleObject):
-    def __init__(self, position, velocity, mass, char="O"):
+    def __init__(self, position, velocity, mass, char="O", drag_coefficient=0.47, area=1.0):
         super().__init__(position, char)
         self.velocity = velocity
         self.mass = mass
+        self.drag_coefficient = drag_coefficient
+        self.area = area
 
     def update(self, world, dt):
         self.velocity += Vector2D(0, -world.config.gravity) * dt
+        
+        velocity_squared = self.velocity.x**2 + self.velocity.y**2
+        drag_magnitude = 0.5 * self.drag_coefficient * world.config.air_density * self.area * velocity_squared
+        
+        if velocity_squared > 0:
+            drag_direction = Vector2D(-self.velocity.x / (velocity_squared**0.5), -self.velocity.y / (velocity_squared**0.5))
+        else:
+            drag_direction = Vector2D(0, 0)
+
+        drag_force = drag_direction * drag_magnitude
+        drag_acceleration = drag_force / self.mass
+
+        self.velocity += drag_acceleration * dt
+
         self.position += self.velocity * dt
         if self.position.y < 0:
             self.position.y = 0
@@ -115,6 +131,7 @@ class Engine:
     fps = 10
     gravity = 9.8
     repulsion = 0.8
+    air_density = 1.293
 
     def start(self):
         return World(40, 20, self)
