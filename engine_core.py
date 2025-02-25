@@ -30,7 +30,7 @@ class UnGravitibleObject:
 
 class GravitibleObject(UnGravitibleObject):
     def __init__(self, position, velocity, mass, char="O"):
-        super().__init__(position)
+        super().__init__(position, char)
         self.velocity = velocity
         self.mass = mass
 
