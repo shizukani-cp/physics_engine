@@ -142,6 +142,9 @@ class Engine:
     def after_update(self, world):
         pass
 
+    def stop_ok(self):
+        return False
+
     def stop(self):
         print("シミュレーションを終了します。")
 

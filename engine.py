@@ -11,14 +11,14 @@ def main():
             world._update(interval)
             world._render()
 
-            if world._all_objects_out_of_bounds():
-                engine.stop()
+            if world._all_objects_out_of_bounds() or engine.stop_ok():
                 break
 
             time.sleep(interval)
         except KeyboardInterrupt:
-            engine.stop()
             break
+
+    engine.stop()
 
 if __name__ == "__main__":
     main()
